@@ -1303,10 +1303,10 @@ footer{background:var(--card-bg);border-top:1px solid var(--bdr);padding:var(--s
 .control-card:nth-child(2){display:flex;flex-direction:column}
 .cadence-cards{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:var(--space-sm)}
 .cadence-card{display:flex;flex-direction:column;justify-content:center}
-/* Dub Strategy: bigger pins AND bigger numbers */
-.globe-pin .pin-outer,.globe-pin .pin-pulse{r:14}
-.globe-pin:hover .pin-outer,.globe-pin.active .pin-outer{r:17}
-.pin-num{font-size:14px;font-weight:900}
+/* Dub Strategy: MUCH bigger pins for finger tapping */
+.globe-pin .pin-outer,.globe-pin .pin-pulse{r:22}
+.globe-pin:hover .pin-outer,.globe-pin.active .pin-outer{r:25}
+.pin-num{font-size:18px;font-weight:900}
 /* Globe popups on mobile: centered overlay card */
 .globe-popup{width:min(90vw,320px);z-index:200}
 .globe-popup::before{display:none}
@@ -1316,14 +1316,14 @@ footer{background:var(--card-bg);border-top:1px solid var(--bdr);padding:var(--s
 .totals-grid{grid-template-columns:1fr}
 .vol-summary-grid{grid-template-columns:repeat(3,1fr)}
 .steps-container{grid-template-columns:1fr 1fr}
-/* Calculator stacks on very small screens */
-.calc-main{grid-template-columns:1fr}
-.control-card{grid-column:1}
+/* Calculator: KEEP 2 columns on small screens, just tighter */
+.calc-main{grid-template-columns:1fr 1fr;gap:4px}
+.control-card{grid-column:2;padding:var(--space-sm)}
 .output-group{grid-column:1}
 /* Globe pins even bigger on tiny screens */
-.globe-pin .pin-outer,.globe-pin .pin-pulse{r:16}
-.globe-pin:hover .pin-outer,.globe-pin.active .pin-outer{r:19}
-.pin-num{font-size:15px}
+.globe-pin .pin-outer,.globe-pin .pin-pulse{r:24}
+.globe-pin:hover .pin-outer,.globe-pin.active .pin-outer{r:27}
+.pin-num{font-size:20px}
 }
 @media(max-width:600px){
 .va-row{grid-template-columns:32px 1fr}
@@ -4997,6 +4997,8 @@ footer{page-break-before:always}
     switchTab('channels');
     animateStaggerItems('channels-panel');
     initTextRotator();
+    // Force scroll to top on load — switchTab's scrollIntoView can mis-scroll on mobile
+    requestAnimationFrame(function() { window.scrollTo(0, 0); });
   }
 
   /* ═══ 4. TAB NAVIGATION ═════════════════════ */
@@ -5856,10 +5858,25 @@ function copyConfig() {
 
   /* ═══ MOBILE GLOBE TOUCH ENHANCEMENT ═══════════ */
   (function() {
-    // Ensure globe pins have pointer cursor for touch devices
-    document.querySelectorAll('.globe-pin').forEach(function(pin) {
-      pin.style.cursor = 'pointer';
-    });
+    function sizePinsForMobile() {
+      var isMobile = window.innerWidth <= 768;
+      var isTiny = window.innerWidth <= 480;
+      var pinR = isTiny ? 24 : (isMobile ? 22 : null);
+      var numSize = isTiny ? '20px' : (isMobile ? '18px' : null);
+
+      document.querySelectorAll('.globe-pin').forEach(function(pin) {
+        pin.style.cursor = 'pointer';
+        if (pinR) {
+          // Set r attribute directly as CSS r may not work on all mobile browsers
+          var circles = pin.querySelectorAll('circle');
+          circles.forEach(function(c) { c.setAttribute('r', pinR); });
+          var num = pin.querySelector('.pin-num');
+          if (num) num.style.fontSize = numSize;
+        }
+      });
+    }
+    sizePinsForMobile();
+    window.addEventListener('resize', sizePinsForMobile);
   })();
 
 })();

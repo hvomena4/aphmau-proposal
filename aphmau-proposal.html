@@ -829,20 +829,28 @@ input[type="range"]:focus-visible {
   .calc-section {
     padding: var(--space-md);
   }
+  /* Keep cadence cards side by side (1fr 1fr) — do NOT stack */
   .cadence-cards {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
   }
+  /* Keep metrics as 2x2 grid — do NOT stack */
   .metrics-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
   }
   .hero-card {
-    padding: var(--space-lg) var(--space-md);
+    padding: var(--space-sm);
   }
   .plan-row {
-    padding: var(--space-sm) var(--space-md);
+    padding: var(--space-xs) var(--space-sm);
   }
   .metric-val {
-    font-size: clamp(24px, 6vw, 32px);
+    font-size: clamp(16px, 4vw, 24px);
+  }
+  .metric-card {
+    padding: var(--space-sm) var(--space-xs);
+  }
+  .metric-label {
+    font-size: 9px;
   }
 }
 
@@ -1289,17 +1297,32 @@ footer{background:var(--card-bg);border-top:1px solid var(--bdr);padding:var(--s
 .calc-main{grid-template-columns:1fr 1fr;gap:var(--space-sm)}
 .controls-panel{display:flex;flex-direction:column;gap:var(--space-sm);grid-column:2;grid-row:1}
 .output-panel{display:flex;flex-direction:column;gap:var(--space-sm);grid-column:1;grid-row:1}
-.control-card{grid-column:unset;grid-row:unset;padding:var(--space-md)}
+.control-card{grid-column:unset;grid-row:unset;padding:var(--space-sm)}
 .output-group{grid-column:unset;grid-row:unset}
-.emotional-moment{order:10}
+.emotional-moment{order:10;font-size:var(--text-xs)}
+/* Hero card compact */
+.hero-card{padding:var(--space-sm)}
+.hero-price{font-size:clamp(24px,6vw,36px)}
+.hero-suffix,.hero-total-line,.hero-context{font-size:10px}
+.hero-label{font-size:var(--text-xs)}
 /* Plan + Savings styling */
-.plan-card{font-size:var(--text-xs)}
-.plan-row{padding:var(--space-xs) var(--space-sm)}
-.savings-callout{font-size:11px;padding:var(--space-sm)}
-/* Cadence card: fill container height, buttons stretch to match */
-.control-card:nth-child(2){flex:1;display:flex;flex-direction:column}
-.cadence-cards{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:var(--space-sm)}
-.cadence-card{display:flex;flex-direction:column;justify-content:center}
+.plan-card{font-size:10px}
+.plan-row{padding:4px var(--space-xs)}
+.plan-row-label{font-size:9px}
+.savings-callout{font-size:10px;padding:var(--space-xs)}
+/* Cadence card: natural height, don't stretch to fill column */
+.control-card:nth-child(2){display:flex;flex-direction:column}
+.control-label{font-size:9px}
+.cadence-cards{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-xs)}
+.cadence-card{display:flex;flex-direction:column;justify-content:center;padding:var(--space-xs)}
+.cadence-card-name{font-size:var(--text-xs)}
+.cadence-card-rate{font-size:var(--text-sm)}
+.savings-badge{font-size:8px;padding:2px 6px}
+.volume-discount-badge{font-size:9px}
+/* Language slider compact */
+.lang-number{font-size:clamp(28px,7vw,40px)}
+.lang-word,.lang-tier{font-size:10px}
+.slider-waypoint span{font-size:9px}
 /* Dub Strategy: MUCH bigger pins for finger tapping */
 .globe-pin .pin-outer,.globe-pin .pin-pulse{r:22}
 .globe-pin:hover .pin-outer,.globe-pin.active .pin-outer{r:25}

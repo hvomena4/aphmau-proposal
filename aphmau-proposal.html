@@ -206,6 +206,7 @@ main.visible{opacity:1;transform:translateY(0)}
     gap: var(--space-sm);
     grid-column: 2;
     grid-row: 1;
+    justify-content: space-between;
   }
   .output-panel {
     display: flex;
@@ -215,11 +216,14 @@ main.visible{opacity:1;transform:translateY(0)}
     grid-row: 1;
   }
   .emotional-moment {
-    order: 10;
+    display: none;
   }
-  /* Individual cards no longer need grid-column since they're flex children */
   .control-card { grid-column: unset; grid-row: unset; }
   .output-group { grid-column: unset; grid-row: unset; }
+  .output-group.plan-fullwidth {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
 }
 
 /* ═══════════════════════════════════════════════
@@ -1293,37 +1297,48 @@ footer{background:var(--card-bg);border-top:1px solid var(--bdr);padding:var(--s
 .vol-label{font-size:10px}
 /* Calculator: hide "Channels Included" card on mobile */
 .control-card:nth-child(3){display:none}
-/* Calculator: iOS-safe 2-column — panels are real grid children, not display:contents */
-.calc-main{grid-template-columns:1fr 1fr;gap:var(--space-sm)}
-.controls-panel{display:flex;flex-direction:column;gap:var(--space-sm);grid-column:2;grid-row:1}
-.output-panel{display:flex;flex-direction:column;gap:var(--space-sm);grid-column:1;grid-row:1}
-.control-card{grid-column:unset;grid-row:unset;padding:var(--space-sm)}
+/* ── Calculator: iOS-safe 2-column ── */
+.calc-main{grid-template-columns:1fr 1fr;gap:4px}
+/* Panels become real grid children (not display:contents) for iOS Safari */
+.controls-panel{display:flex;flex-direction:column;gap:4px;grid-column:2;grid-row:1;justify-content:space-between}
+.output-panel{display:flex;flex-direction:column;gap:4px;grid-column:1;grid-row:1}
+.control-card{grid-column:unset;grid-row:unset;padding:8px}
 .output-group{grid-column:unset;grid-row:unset}
-.emotional-moment{order:10;font-size:var(--text-xs)}
-/* Plan+Savings: pulled out of output-panel by JS, spans full width as direct grid child */
+/* Hide emotional moment on mobile — it wastes space */
+.emotional-moment{display:none}
+/* Plan+Savings: JS moves this to calc-main as direct grid child */
 .output-group.plan-fullwidth{grid-column:1 / -1;grid-row:2}
 .plan-card{font-size:10px}
-.plan-row{padding:4px var(--space-xs)}
+.plan-row{padding:4px 8px}
 .plan-row-label{font-size:9px}
-.savings-callout{font-size:10px;padding:var(--space-xs)}
-/* Hero card compact */
-.hero-card{padding:var(--space-sm)}
-.hero-price{font-size:clamp(24px,6vw,36px)}
-.hero-suffix,.hero-total-line,.hero-context{font-size:10px}
-.hero-label{font-size:var(--text-xs)}
-/* Cadence card: stretch to align bottom with metrics */
-.control-card:nth-child(2){flex:1;display:flex;flex-direction:column}
-.control-label{font-size:9px}
-.cadence-cards{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:var(--space-xs);align-content:end}
-.cadence-card{display:flex;flex-direction:column;justify-content:center;padding:var(--space-xs)}
-.cadence-card-name{font-size:var(--text-xs)}
-.cadence-card-rate{font-size:var(--text-sm)}
-.savings-badge{font-size:8px;padding:2px 6px}
-.volume-discount-badge{font-size:9px}
-/* Language slider compact */
-.lang-number{font-size:clamp(28px,7vw,40px)}
-.lang-word,.lang-tier{font-size:10px}
-.slider-waypoint span{font-size:9px}
+.plan-row-val{font-size:10px}
+.savings-callout{font-size:10px;padding:6px 8px}
+/* ── Hero card: ultra-compact ── */
+.hero-card{padding:8px;text-align:center}
+.hero-label{font-size:9px;margin-bottom:2px}
+.hero-price{font-size:clamp(22px,5.5vw,32px);line-height:1.1}
+.hero-suffix{font-size:9px}
+.hero-total-line{font-size:9px;margin-top:2px}
+.hero-context{font-size:8px}
+/* ── Metrics: tight 2×2 ── */
+.metrics-grid{gap:4px}
+.metric-card{padding:6px 4px}
+.metric-val{font-size:clamp(14px,3.5vw,20px);margin-bottom:1px}
+.metric-label{font-size:8px;letter-spacing:0.03em}
+/* ── Cadence: natural height, sits at bottom via space-between ── */
+.control-card:nth-child(2){display:flex;flex-direction:column;padding:8px}
+.control-label{font-size:9px;margin-bottom:4px}
+.cadence-cards{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+.cadence-card{padding:6px 4px;text-align:center}
+.cadence-card-name{font-size:10px;margin-bottom:2px}
+.cadence-card-rate{font-size:clamp(12px,3vw,16px)}
+.savings-badge{font-size:7px;padding:1px 4px;top:-6px}
+.volume-discount-badge{font-size:8px;padding:2px 4px}
+/* ── Language slider: compact ── */
+.lang-number{font-size:clamp(24px,6vw,36px)}
+.lang-word,.lang-tier{font-size:9px}
+.slider-waypoint span{font-size:8px}
+.slider-waypoints{margin-top:4px}
 /* Dub Strategy: MUCH bigger pins for finger tapping */
 .globe-pin .pin-outer,.globe-pin .pin-pulse{r:22}
 .globe-pin:hover .pin-outer,.globe-pin.active .pin-outer{r:25}
@@ -1337,11 +1352,16 @@ footer{background:var(--card-bg);border-top:1px solid var(--bdr);padding:var(--s
 .totals-grid{grid-template-columns:1fr}
 .vol-summary-grid{grid-template-columns:repeat(3,1fr)}
 .steps-container{grid-template-columns:1fr 1fr}
-/* Calculator: KEEP 2 columns on small screens, just tighter gap */
-.calc-main{grid-template-columns:1fr 1fr;gap:4px}
-.controls-panel{padding:0}
-.output-panel{padding:0}
-.control-card{padding:var(--space-sm)}
+/* Calculator: tighter on tiny screens */
+.calc-main{grid-template-columns:1fr 1fr;gap:2px}
+.control-card{padding:6px}
+.hero-card{padding:6px}
+.metric-card{padding:4px 2px}
+.metric-val{font-size:clamp(12px,3vw,16px)}
+.metric-label{font-size:7px}
+.cadence-card{padding:4px 2px}
+.cadence-card-name{font-size:9px}
+.cadence-card-rate{font-size:clamp(10px,2.5vw,14px)}
 /* Globe pins even bigger on tiny screens */
 .globe-pin .pin-outer,.globe-pin .pin-pulse{r:24}
 .globe-pin:hover .pin-outer,.globe-pin.active .pin-outer{r:27}

@@ -1300,20 +1300,21 @@ footer{background:var(--card-bg);border-top:1px solid var(--bdr);padding:var(--s
 .control-card{grid-column:unset;grid-row:unset;padding:var(--space-sm)}
 .output-group{grid-column:unset;grid-row:unset}
 .emotional-moment{order:10;font-size:var(--text-xs)}
+/* Plan+Savings: pulled out of output-panel by JS, spans full width as direct grid child */
+.output-group.plan-fullwidth{grid-column:1 / -1;grid-row:2}
+.plan-card{font-size:10px}
+.plan-row{padding:4px var(--space-xs)}
+.plan-row-label{font-size:9px}
+.savings-callout{font-size:10px;padding:var(--space-xs)}
 /* Hero card compact */
 .hero-card{padding:var(--space-sm)}
 .hero-price{font-size:clamp(24px,6vw,36px)}
 .hero-suffix,.hero-total-line,.hero-context{font-size:10px}
 .hero-label{font-size:var(--text-xs)}
-/* Plan + Savings styling */
-.plan-card{font-size:10px}
-.plan-row{padding:4px var(--space-xs)}
-.plan-row-label{font-size:9px}
-.savings-callout{font-size:10px;padding:var(--space-xs)}
-/* Cadence card: natural height, don't stretch to fill column */
-.control-card:nth-child(2){display:flex;flex-direction:column}
+/* Cadence card: stretch to align bottom with metrics */
+.control-card:nth-child(2){flex:1;display:flex;flex-direction:column}
 .control-label{font-size:9px}
-.cadence-cards{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-xs)}
+.cadence-cards{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:var(--space-xs);align-content:end}
 .cadence-card{display:flex;flex-direction:column;justify-content:center;padding:var(--space-xs)}
 .cadence-card-name{font-size:var(--text-xs)}
 .cadence-card-rate{font-size:var(--text-sm)}
@@ -5898,6 +5899,43 @@ function copyConfig() {
     }
     sizePinsForMobile();
     window.addEventListener('resize', sizePinsForMobile);
+  })();
+
+  /* ═══ MOBILE: MOVE PLAN CARD TO FULL WIDTH ═══ */
+  (function() {
+    var calcMain = document.querySelector('.calc-main');
+    var outputPanel = document.querySelector('.output-panel');
+    if (!calcMain || !outputPanel) return;
+
+    // The plan+savings output-group is the last output-group in .output-panel
+    var outputGroups = outputPanel.querySelectorAll('.output-group');
+    var planGroup = outputGroups[outputGroups.length - 1]; // last one has .plan-card
+    if (!planGroup || !planGroup.querySelector('.plan-card')) return;
+
+    var movedToGrid = false;
+    var originalParent = planGroup.parentNode;
+    var originalNext = planGroup.nextElementSibling;
+
+    function handlePlanLayout() {
+      var isMobile = window.innerWidth <= 768;
+      if (isMobile && !movedToGrid) {
+        // Move plan group out of output-panel, append to calc-main as direct grid child
+        planGroup.classList.add('plan-fullwidth');
+        calcMain.appendChild(planGroup);
+        movedToGrid = true;
+      } else if (!isMobile && movedToGrid) {
+        // Move back into output-panel for desktop layout
+        planGroup.classList.remove('plan-fullwidth');
+        if (originalNext) {
+          originalParent.insertBefore(planGroup, originalNext);
+        } else {
+          originalParent.appendChild(planGroup);
+        }
+        movedToGrid = false;
+      }
+    }
+    handlePlanLayout();
+    window.addEventListener('resize', handlePlanLayout);
   })();
 
 })();
